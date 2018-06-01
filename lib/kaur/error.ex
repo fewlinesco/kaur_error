@@ -1,4 +1,8 @@
 defmodule Kaur.Error do
+  @moduledoc """
+  Error shaping library for Elixir
+  """
+
   import Kernel, except: [inspect: 1]
   import Inspect.Algebra
 
@@ -44,10 +48,7 @@ defmodule Kaur.Error do
         @behaviour Kaur.Error
 
         struct =
-          defstruct(
-            [__exception__: true, __kaur_error__: true, next: :empty] ++
-              unquote(fields)
-          )
+          defstruct([__exception__: true, __kaur_error__: true, next: :empty] ++ unquote(fields))
 
         if Map.has_key?(struct, :message) do
           def message(error), do: error.message
@@ -62,8 +63,7 @@ defmodule Kaur.Error do
         def exception(args) when is_list(args) do
           struct = __struct__()
 
-          {valid, invalid} =
-            Enum.split_with(args, fn {k, _} -> Map.has_key?(struct, k) end)
+          {valid, invalid} = Enum.split_with(args, fn {k, _} -> Map.has_key?(struct, k) end)
 
           case invalid do
             [] ->
