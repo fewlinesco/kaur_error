@@ -1,0 +1,33 @@
+sudo: required
+language: elixir
+elixir:
+- 1.4.0
+- 1.5.0
+- 1.5.2
+- 1.6.0
+otp_release:
+- 18.3
+- 19.3
+- 20.0
+- 20.1
+matrix:
+  exclude:
+  - elixir: 1.4.0
+    otp_release: 20.0
+  - elixir: 1.4.0
+    otp_release: 20.1
+  - elixir: 1.6.0
+    otp_release: 18.3
+cache:
+  directories:
+  - _build
+  - deps
+script:
+- mix test
+- MIX_ENV=test mix credo --strict
+after_script:
+- MIX_ENV=docs mix deps.get --only docs
+- MIX_ENV=docs mix inch.report
+notifications:
+  slack:
+    secure: Mb7XSUljqIAytq4g2s85rApQYEkcBsYDnaEk52+ovmzLHzlUcUTNHd+SqOpU3nykGLASBBOzPKNXEBMo3n7MSJpURWMKKFMtXBqhu+yTweQWoZ97789kboU7GZigjO6Jyp7Um6Fgdcy/TX9ofMUjKHmcYJFdzgWX052HtGZ3Cgea39i7Ishn9FnTYPeUr0JbEHREBcYuiEtmEydIEr0tyJPWdcNbYhf1pURijdu7Jpk8n48q7MdcTe6f00b8QVBtKmR/fFXvZhKtccMFgkoNn8CWQNHVRvxM52NlD0ni+tQuGfuF/1kNt9wP97pI8RlwJGbFi+z6H9lmnnFO8J25EksoZXWWSi5QWMZNHC/ST+B2rz15zdcU8KR3ZhiQDmit6qq/N8mz4nHqBjaqV8DQ3g6daNhu7DA93b7oPf+6j1jnoOWpDALt4ByOHyH1/Ei6o6RKxTZpyos+afcgRBzPEKiwV3CYnX4QzzYUxrBjNvuWlXsT/Tiry5mXOaFNJoCUXv4toi/E/XImml7HEHSTZw+Xslp2NdvebVhJ4VvvStNriuEAQzDpzA//PtzP0Ie/hZaTzaLYQbWjAmKH6TXzODTNv5zGKslz7pSHbpwtCuM5KAPePgkZ3y624lJtphx2P9javtK4Qifwtn/YXt4OC9zXFSP6mI7Gk1BkhyA39jY=
