@@ -1,28 +1,54 @@
 defmodule KaurError.MixProject do
   use Mix.Project
 
+  @project_url "https://github.com/fewlinesco/kaur_error"
+
   def project do
     [
       app: :kaur_error,
-      version: "0.1.0",
-      elixir: "~> 1.6",
+      build_embedded: Mix.env() == :prod,
+      consolidate_protocols: false,
+      deps: deps(),
+      description: "Utilities for working with errors",
+      dialyzer: dialyzer(),
+      docs: [main: "readme", extras: ["README.md"]],
+      elixir: "~> 1.4",
+      homepage_url: @project_url,
+      name: "kaur_error",
+      package: package(),
+      source_url: @project_url,
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      version: "1.0.0"
     ]
   end
 
-  # Run "mix help compile.app" to learn about applications.
   def application do
     [
       extra_applications: [:logger]
     ]
   end
 
-  # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},
+      {:credo, "~> 0.8.10", only: [:dev, :test]},
+      {:dialyxir, "~> 0.5", only: [:dev, :test]},
+      {:earmark, ">= 1.0.3", only: [:docs]},
+      {:ex_doc, "~> 0.16.2", only: [:docs]},
+      {:excoveralls, "~> 0.7.1", only: [:test]},
+      {:inch_ex, "~> 0.5.5", only: [:docs]},
+      {:kaur, "~> 1.1.0", only: [:test]}
+    ]
+  end
+
+  defp dialyzer do
+    [verbose: true, flags: [:error_handling, :race_conditions]]
+  end
+
+  defp package do
+    [
+      licenses: ["MIT"],
+      links: %{"GitHub" => @project_url},
+      maintainers: ["Fewlines SAS"]
     ]
   end
 end
