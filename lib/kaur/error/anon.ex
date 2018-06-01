@@ -1,4 +1,8 @@
 defmodule Kaur.Error.Anon do
+  @moduledoc """
+  Anonymous structure for errors from exceptions
+  """
+
   import Kernel, except: [inspect: 1]
 
   @behaviour Kaur.Error
