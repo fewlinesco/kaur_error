@@ -62,13 +62,7 @@ defmodule Kaur.ErrorTest do
     assert Kaur.Error.trace(error2) == [error1, error0]
   end
 
-  test "from_exception: returns a kaur error" do
-    exn = %RuntimeError{message: "dummy"}
-    error = Kaur.Error.from_exception(exn)
-    assert Kaur.Error.kaur_error?(error)
-  end
-
-  defp error(message, next \\ :empty) do
+  def error(message, next \\ :empty) do
     %E{__exception__: true, __kaur_error__: true, message: message, next: next}
   end
 end

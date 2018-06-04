@@ -1,6 +1,44 @@
 defmodule Kaur.Error do
+  @moduledoc """
+  Error shaping library for Elixir
+  """
   import Kernel, except: [inspect: 1]
   import Inspect.Algebra
+
+  defmacrop aux(map, open, sep, close, opts) do
+    bounded_version = Version.parse!("1.6.0")
+    actual_version = Version.parse!(System.version())
+
+    if Version.compare(actual_version, bounded_version) in [:gt, :eq] do
+      quote bind_quoted: [
+              open: open,
+              map: map,
+              close: close,
+              opts: opts,
+              sep: sep
+            ] do
+        container_doc(
+          open,
+          map,
+          close,
+          opts,
+          traverse_fun(map, opts),
+          separator: sep,
+          break: :strict
+        )
+      end
+    else
+      quote bind_quoted: [
+              open: open,
+              map: map,
+              close: close,
+              opts: opts,
+              sep: sep
+            ] do
+        surround_many(open, map, close, opts, traverse_fun(map, opts), sep)
+      end
+    end
+  end
 
   @typedoc "The error type"
   @type t :: %{
@@ -109,27 +147,6 @@ defmodule Kaur.Error do
   end
 
   @doc """
-  Takes an elixir exception and returns a `Kaur.Error.Anon` struct.
-
-      iex> Kaur.Error.from_exception(%RuntimeError{})
-      %Kaur.Error.Anon{
-        exception: %RuntimeError{message: "runtime error"},
-        message: "runtime error",
-        next: :empty
-      }
-  """
-  @spec from_exception(term) :: t
-  def from_exception(%module{__exception__: true} = exception) do
-    %Kaur.Error.Anon{
-      __exception__: true,
-      __kaur_error__: true,
-      exception: exception,
-      message: module.message(exception),
-      next: :empty
-    }
-  end
-
-  @doc """
   Returns `true` if the given `term` is a kaur error or false otherwise.
   """
   @spec kaur_error?(t) :: boolean
@@ -201,16 +218,7 @@ defmodule Kaur.Error do
     open = color("%" <> name <> "{", :map, opts)
     sep = color(",", :map, opts)
     close = color("}", :map, opts)
-
-    container_doc(
-      open,
-      map,
-      close,
-      opts,
-      traverse_fun(map, opts),
-      separator: sep,
-      break: :strict
-    )
+    aux(map, open, sep, close, opts)
   end
 
   defp to_map({key, value}, opts, sep) do
